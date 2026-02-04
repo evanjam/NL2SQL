@@ -1,2 +1,6 @@
-user_input = input("inputtest:")
-print(user_input)
+def main():
+    user_input = input("inputtest:")
+    print(user_input)
+    print("\ncomplete")
+
+main()
