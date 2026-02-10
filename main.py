@@ -18,11 +18,12 @@ def prompt_gemini(prompt: str) -> str: #type hint, this function returns a strin
 
 #entry point of program
 def main():
-    user_input = input("Enter prompt to be sent to Gemini: (or type quit/exit)\n").strip()
-    if user_input.lower() in {'exit', "quit"}:
-        return
+    while True:
+        user_input  = input("Enter prompt to be sent to Gemini: (or type quit/exit)\n").strip()
+        if user_input.lower() in {'exit', "quit"}:
+            break
 
-    response = prompt_gemini(user_input)
-    print("\nGemini's response: " + response)
+        response = prompt_gemini(user_input)
+        print("\nGemini's response: " + response)
         
 main()
