@@ -1,0 +1,27 @@
+#environment setup
+VS Code
+Python Virtual Environments (venv) to isolate project dependencies (genai from google)
+activating the venv ensures the correct python + packages are used
+    venv\Scripts\activate
+
+#dependency management
+third-party libraries (google-genai) are installed inside the venv
+requirements.txt captures dependency state to make the project more easily reproducible
+****venv/ is excluded from version control via .gitignore****
+
+#secret management
+API keys should never be hardcoded
+gemini API key is currently being stored as a Windows OS environment variable
+python retrieves secrets securely using os.getenv (imported from os)
+secrets are inherited by the process and are independent of the venv
+
+#python structure and Gemini API integration
+type-hints for functions (def prompt_gemini()) to enhance readability
+use a small wrapper function to isolate external API interaction (def prompt_gemini())
+client.models.genai.generate_content() used for basic text interaction with Gemini
+
+#workflow
+activate venvrun python main.python
+provide a prompt, receive and display gemini response
+
+#wrapped in a while loop so I can send repeated prompts and see if I can measure API token consumption/usage
