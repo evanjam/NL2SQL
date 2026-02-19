@@ -39,7 +39,11 @@ Goal: Establish the fundamental communication interface between a Python Program
 
 Deliverable: A python-based terminal program where a user can enter a prompt that is sent to Google Gemini API, a certain amount of API tokens are consumed, and then results are returned in the terminal. 
 
- 
+Phase 0.5: Set up sandbox SQL database and connect Python to DB
+
+Goal: Set up the local SQL DB instance, populate it with sample data, and connect python to the DB.
+
+Deliverable: A python-based terminal program where a user can enter an SQL query that it sent and authenticated against the local SQL DB and a certain SQL query result is then returned in the terminal 
 
 Phase 1: Minimal MCP. 
 
