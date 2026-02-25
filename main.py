@@ -1,29 +1,44 @@
-import os #need this to get the env variable from OS
-from google import genai #need this to use the genai client.models.generate_content() 
+import os
+import pyodbc
+from google import genai
 
-#define a function to pass a string as a prompt to Gemini
-def prompt_gemini(prompt: str) -> str: #type hint, this function returns a string
-    api_key = os.getenv("GeminiKey") #gets our GeminiAPIKey from OS env variable
-    if not api_key:
-        raise RuntimeError("GeminiKey environment variable is missing")
+#Database Layer
 
-    client = genai.Client(api_key=api_key) #thisis my authenticated connection to Gemini
+def run_query(sql: str) -> list[dict]:
+    # connect
+    # execute
+    # return rows as list of dicts
+    # mostly in the dbtest.py proof of concept
+    pass
 
-    resp = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=prompt,
-    )
+def list_tables() -> list[dict]:
+    # hardcoded SQL
+    # call run_query()
+    pass
 
-    return resp.text or "" #resp can contain other data which we are ignoring for now by just returning it as plain text
+#Gemini Layer
 
-#entry point of program
+SYSTEM_INSTRUCTIONS = """
+You are a database assistant.
+You have access to tools.
+Always call tools instead of guessing.
+"""
+
+def create_chat():
+    # instantiate model with tools=[list_tables]
+    # enable automatic function calling
+    # evolved version of phase0's "prompt_gemini" function that's used to instantiate persistent chats instead of sending one-off 1:1 prompt->response
+    pass
+
+#Entry Point
+
 def main():
+    chat = create_chat()
+
     while True:
         user_input  = input("Enter prompt to be sent to Gemini: (or type quit/exit)\n").strip()
-        if user_input.lower() in {'exit', "quit"}:
+        if user_input.lower() in {"exit", "quit"}:
             break
 
-        response = prompt_gemini(user_input)
-        print("\nGemini's response: " + response)
-        
-main()
+        response = chat.send_message(user_input)
+        print(response.text)
