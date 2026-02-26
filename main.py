@@ -46,7 +46,17 @@ def run_query(sql: str) -> list[dict]:
 def list_tables() -> list[dict]:
     # hardcoded SQL
     # call run_query()
-    pass
+    sql = """
+    SELECT
+        s.name AS SchemaName,
+        t.name AS TableName,
+        t.create_date AS CreatedDate
+    FROM sys.tables t
+    INNER JOIN sys.schemas s
+        ON t.schema_id = s.schema_ID
+    ORDER BY s.name, t.name;    
+    """
+    return run_query(sql)
 
 #----------
 #Gemini Layer
@@ -79,7 +89,7 @@ def main():
         response = chat.send_message(user_input)
         print(response.text)
 
-#TEMP TEST BLOCK
+#TEMP TEST BLOCK: python can still execute sql (whew)
 if __name__ == "__main__":
     data = run_query("""
         SELECT TOP (5)
@@ -89,3 +99,9 @@ if __name__ == "__main__":
         FROM dbo.Employees
     """)
     print(data)
+
+#TEMP TEST BLOCK2: demonstrate the tool wrapper works correctly and put the list_tables() tool to use
+if __name__ == "__main__":
+    data = list_tables()
+    for row in data[:10]:
+        print(row)
