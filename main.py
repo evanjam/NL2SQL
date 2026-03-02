@@ -56,7 +56,13 @@ def list_tables() -> list[dict]:
         ON t.schema_id = s.schema_ID
     ORDER BY s.name, t.name;    
     """
-    return run_query(sql)
+    rows = run_query(sql)
+
+    for r in rows:
+        if r.get("CreatedDate") is not None:
+            r["CreatedDate"] = r["CreatedDate"].isoformat()
+
+    return rows
 
 #----------
 #Gemini Layer
@@ -72,7 +78,36 @@ def create_chat():
     # instantiate model with tools=[list_tables]
     # enable automatic function calling
     # evolved version of phase0's "prompt_gemini" function that's used to instantiate persistent chats instead of sending one-off 1:1 prompt->response
-    pass
+    api_key = os.getenv("GeminiKey")
+    if not api_key:
+        raise RunTimeError("GeminiKey environment variable is missing")
+    
+    client = genai.Client(api_key=api_key)
+
+    #"chat" is just our own container including client+conversation history
+    return {
+        "client": client,
+        "history": []
+    }
+
+def send_message(chat, user_text: str) -> str:
+    chat["history"].append(user_text)
+
+    resp = chat["client"].models.generate_content(
+        model="gemini-2.5-flash",
+        contents=chat["history"],
+        config=types.GenerateConfig(
+            system_instructions=SYSTEM_INSTRUCTIONS,
+            tools=[list_tables],
+            temperature=0,
+        ),
+    )
+
+    #keep the conversation going
+    if resp.text:
+        chat["history"].append(resp.text)
+
+    return resp.text or ""
 
 #----------
 #Entry Point
@@ -86,22 +121,25 @@ def main():
         if user_input.lower() in {"exit", "quit"}:
             break
 
-        response = chat.send_message(user_input)
-        print(response.text)
+        response = send_message(chat, user_input)
+        print("\n" + response + "\n")
 
 #TEMP TEST BLOCK: python can still execute sql (whew)
-if __name__ == "__main__":
-    data = run_query("""
-        SELECT TOP (5)
-            EmployeeID,
-            FirstName,
-            LastName
-        FROM dbo.Employees
-    """)
-    print(data)
+#if __name__ == "__main__":
+#    data = run_query("""
+#        SELECT TOP (5)
+#            EmployeeID,
+#            FirstName,
+#            LastName
+#       FROM dbo.Employees
+#    """)
+#    print(data)
 
 #TEMP TEST BLOCK2: demonstrate the tool wrapper works correctly and put the list_tables() tool to use
+#if __name__ == "__main__":
+#    data = list_tables()
+#    for row in data[:10]:
+#        print(row)
+
 if __name__ == "__main__":
-    data = list_tables()
-    for row in data[:10]:
-        print(row)
+    main()
