@@ -11,7 +11,6 @@ def run_query(sql: str) -> list[dict]:
     # connect
     # execute
     # return rows as list of dicts
-    # mostly in the dbtest.py proof of concept
     DRIVER_NAME = "ODBC Driver 18 for SQL Server"
     SERVER = os.getenv("NorthwindSVR")
     DATABASE = os.getenv("NorthwindDB")
@@ -81,7 +80,7 @@ def create_chat():
     # evolved version of phase0's "prompt_gemini" function that's used to instantiate persistent chats instead of sending one-off 1:1 prompt->response
     api_key = os.getenv("GeminiKey")
     if not api_key:
-        raise RunTimeError("GeminiKey environment variable is missing")
+        raise RuntimeError("GeminiKey environment variable is missing")
     
     client = genai.Client(api_key=api_key)
 
