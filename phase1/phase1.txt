@@ -20,3 +20,13 @@ This demonstrates the foundation for the project.
 Midterm goal is to expand this by adding additional tools and support being able to ask Gemini a more specific question such as:
 "List all employees with the title "Sales Representative" who live in London UK"
 This question is completely answerable from information just in the Employees table
+
+*update: simply adding the "run_query" function to the list of tools allows gemini to reliably provide a correct answer to the question about sales representatives
+that being said it still needed to take a "wild guess" that there exists a field called "title" within the employee table, so it's not fool proof nor scientific.
+thus, the goal between now and midterm is going to be to implement the next two tools in the toolbox:
+
+describe_table(table_name)
+-lets gemini discover columns
+
+sample_table_rows(table_name, n)
+-lets gemini see example data
