@@ -29,7 +29,7 @@ The Data Flow:
 
 Architecture Diagram: 
 
-![diagram.png](images/diagram.png)
+![diagram.png](phase0/diagram.png)
 
 Implementation Strategy (Phased Approach) 
 
