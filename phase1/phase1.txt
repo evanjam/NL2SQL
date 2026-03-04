@@ -1,0 +1,22 @@
+phase1 represents a key milestone where gemini is demonstrated to be able to use tools to learn about the database and answer questions using the tools provided.
+
+phase1 builds the key structure where we are creating and maintaining a chat instance where each instance contains:
+conversation history,
+system instructions, 
+and a set of available tools
+
+the instructions are simple "you are a database assistance, use tools instead of guessing", and the first tool is a simple "list_tables" query which returns table metadata sys.tables and sys.schemas
+
+The checkpoint for phase1 is that a user can ask Gemini a question such as "what tables are in this database?"
+-Gemini will recognize that it does not know the database structure,
+-it calls the list_tables() tool,
+-it receives the list of tables from the db,
+-it then responds in plain english with the correct table names
+
+*At this stage, Gemini has NO built-in knowledge of the database schema. All database knowledge comes exclusively from the tools provided by the program.
+
+This demonstrates the foundation for the project. 
+
+Midterm goal is to expand this by adding additional tools and support being able to ask Gemini a more specific question such as:
+"List all employees with the title "Sales Representative" who live in London UK"
+This question is completely answerable from information just in the Employees table
