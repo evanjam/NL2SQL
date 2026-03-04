@@ -1,6 +1,7 @@
 import os
 import pyodbc
 from google import genai
+from google.genai import types
 
 #----------
 #Database Layer
@@ -96,8 +97,8 @@ def send_message(chat, user_text: str) -> str:
     resp = chat["client"].models.generate_content(
         model="gemini-2.5-flash",
         contents=chat["history"],
-        config=types.GenerateConfig(
-            system_instructions=SYSTEM_INSTRUCTIONS,
+        config=types.GenerateContentConfig(
+            system_instruction=SYSTEM_INSTRUCTIONS,
             tools=[list_tables],
             temperature=0,
         ),
