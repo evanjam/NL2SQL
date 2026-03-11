@@ -87,6 +87,44 @@ def describe_table(table_name: str) -> str:
 
     return "\n".join(lines)
 
+def sample_table_rows(table_name: str, n: int = 5) -> str:
+    allowed_tables = list_tables().split(", ")
+    if table_name not in allowed_tables:
+        return f"Table '{table_name}' not found."
+    
+    if n < 1:
+        n = 1
+    if n > 10:
+        n = 10
+
+    #get columns from schema and drop Photo
+    schema = run_query(f"""
+        SELECT COLUMN_NAME
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_NAME = '{table_name}'
+        ORDER BY ORDINAL_POSITION                   
+    """)
+
+    columns = [row["COLUMN_NAME"] for row in schema if row["COLUMN_NAME"] != "Photo"]
+
+    column_list = ", '.join(columns)"
+
+    sql = f"""
+    SELECT TOP ({n}) *
+    FROM dbo.[{table_name}]
+    """
+
+    rows = run_query(sql)
+
+    if not rows:
+        return f"No rows found in table '{table_name}'."
+    
+    lines = [f"Sample rows from {table_name}:"]
+    for row in rows:
+        lines.append(str(row))
+
+    return "\n".join(lines)
+
 #----------
 #Gemini Layer
 #----------
@@ -151,5 +189,9 @@ def main():
 #    main()
 
 #TEMP TEST BLOCK: demonstrate the tool wrapper works correctly and put the describe_table tool to use
+#if __name__ == "__main__":
+#    print(describe_table("Employees"))
+
+#TEMP TEST BLOCK:
 if __name__ == "__main__":
-    print(describe_table("Employees"))
+    print(sample_table_rows("Employees", 3))
