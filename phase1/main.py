@@ -192,10 +192,14 @@ def main():
 if __name__ == "__main__":
     main()
 
-#TEMP TEST BLOCK: demonstrate the tool wrapper works correctly and put the describe_table tool to use
+#TEMP TEST BLOCK for list_tables tool
+#if __name__ == "__main__":
+#    print(list_tables())
+
+#TEMP TEST BLOCK for describe_table tool 
 #if __name__ == "__main__":
 #    print(describe_table("Employees"))
 
-#TEMP TEST BLOCK:
+#TEMP TEST BLOCK for sample_table_rows tool
 #if __name__ == "__main__":
 #    print(sample_table_rows("Employees", 1))
