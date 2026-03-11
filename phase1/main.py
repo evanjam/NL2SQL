@@ -97,7 +97,7 @@ def sample_table_rows(table_name: str, n: int = 5) -> str:
     if n > 10:
         n = 10
 
-    #get columns from schema and drop Photo
+    #get columns from schema and drop Photo column
     schema = run_query(f"""
         SELECT COLUMN_NAME
         FROM INFORMATION_SCHEMA.COLUMNS
@@ -105,12 +105,16 @@ def sample_table_rows(table_name: str, n: int = 5) -> str:
         ORDER BY ORDINAL_POSITION                   
     """)
 
-    columns = [row["COLUMN_NAME"] for row in schema if row["COLUMN_NAME"] != "Photo"]
+    columns = [
+        row["COLUMN_NAME"]
+        for row in schema
+        if row["COLUMN_NAME"] not in {"Photo"}
+    ]
 
-    column_list = ", '.join(columns)"
+    column_list = ", ".join(columns)
 
     sql = f"""
-    SELECT TOP ({n}) *
+    SELECT TOP ({n}) {column_list}
     FROM dbo.[{table_name}]
     """
 
@@ -159,7 +163,7 @@ def send_message(chat, user_text: str) -> str:
         contents=chat["history"],
         config=types.GenerateContentConfig(
             system_instruction=SYSTEM_INSTRUCTIONS,
-            tools=[list_tables],
+            tools=[list_tables, describe_table, sample_table_rows],
             temperature=0,
         ),
     )
@@ -185,13 +189,13 @@ def main():
         response = send_message(chat, user_input)
         print("\n" + response + "\n")
 
-#if __name__ == "__main__":
-#    main()
+if __name__ == "__main__":
+    main()
 
 #TEMP TEST BLOCK: demonstrate the tool wrapper works correctly and put the describe_table tool to use
 #if __name__ == "__main__":
 #    print(describe_table("Employees"))
 
 #TEMP TEST BLOCK:
-if __name__ == "__main__":
-    print(sample_table_rows("Employees", 3))
+#if __name__ == "__main__":
+#    print(sample_table_rows("Employees", 1))
