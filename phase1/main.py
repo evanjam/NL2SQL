@@ -57,7 +57,7 @@ def list_tables() -> str:
 
     table_names = [row["TableName"] for row in rows]
 
-    return rows
+    return ", ".join(table_names)
 
 #----------
 #Gemini Layer
@@ -122,8 +122,8 @@ def main():
 #TEMP TEST BLOCK2: demonstrate the tool wrapper works correctly and put the list_tables() tool to use
 if __name__ == "__main__":
     data = list_tables()
-    for row in data[:10]:
-        print(row)
+    print("Tables in database")
+    print(data)
 
 #if __name__ == "__main__":
 #    main()
