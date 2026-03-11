@@ -43,24 +43,19 @@ def run_query(sql: str) -> list[dict]:
 
         return results
 
-def list_tables() -> list[dict]:
+def list_tables() -> str:
     # hardcoded SQL
     # call run_query()
     sql = """
     SELECT
-        s.name AS SchemaName,
-        t.name AS TableName,
-        t.create_date AS CreatedDate
+        t.name AS TableName
     FROM sys.tables t
-    INNER JOIN sys.schemas s
-        ON t.schema_id = s.schema_ID
-    ORDER BY s.name, t.name;    
+    ORDER BY t.name;    
     """
+
     rows = run_query(sql)
 
-    for r in rows:
-        if r.get("CreatedDate") is not None:
-            r["CreatedDate"] = r["CreatedDate"].isoformat()
+    table_names = [row["TableName"] for row in rows]
 
     return rows
 
@@ -124,22 +119,11 @@ def main():
         response = send_message(chat, user_input)
         print("\n" + response + "\n")
 
-#TEMP TEST BLOCK: python can still execute sql (whew)
-#if __name__ == "__main__":
-#    data = run_query("""
-#        SELECT TOP (5)
-#            EmployeeID,
-#            FirstName,
-#            LastName
-#       FROM dbo.Employees
-#    """)
-#    print(data)
-
 #TEMP TEST BLOCK2: demonstrate the tool wrapper works correctly and put the list_tables() tool to use
-#if __name__ == "__main__":
-#    data = list_tables()
-#    for row in data[:10]:
-#        print(row)
-
 if __name__ == "__main__":
-    main()
+    data = list_tables()
+    for row in data[:10]:
+        print(row)
+
+#if __name__ == "__main__":
+#    main()
