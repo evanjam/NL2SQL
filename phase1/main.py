@@ -87,7 +87,7 @@ def describe_table(table_name: str) -> str:
 
     return "\n".join(lines)
 
-def sample_table_rows(table_name: str, n: int = 5) -> str:
+def sample_table_rows(table_name: str, n: int) -> str:
     allowed_tables = list_tables().split(", ")
     if table_name not in allowed_tables:
         return f"Table '{table_name}' not found."
