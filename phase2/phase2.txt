@@ -1,0 +1,48 @@
+Phase 2: Controlled Query Execution (Final Phase (for now™)
+
+Phase 2 represents the transition from *database exploration* to *controlled query execution* within this NL2SQL system. 
+While Phase 1 demonstrated that an LLM can use tools to intelligently explore a database, Phase 2 focuses on ensring that this capability is safe, efficient, and "guardrails" are in place to control cost and security before allowing the model to execute direct SQL queries. 
+
+Core Objective:
+"An LLM should not be trusted to directly query a database without first proving it understands the structure and contents of the database."
+
+By the end of Phase 2, the system will reduce hallucination and schema guessing, minimize unnecessary query attempts, control api and compute costs, and produce precise, efficient, SQL queries. This is the culmination of the project's core idea.
+
+This will be accomplished in a 2-stage architecture: 
+Stage 1: Research Phase
+In the research phase, the model will be restricted to the following tools: 
+list_tables()
+describe_table(table_name)
+sample_table_rows(table_name, n)
+
+During this phase, the model must discover available tables, inspect schema, and examine sample data values. This mimics the behavior of a human analyst investigating and exploring the database. 
+
+Stage 2: Query Phase
+Only after completing the Research Phase is the model granted access to:
+run_query(sql)
+This enables (forces) the model to construct and execute a *targeted, specific, efficient* SQL query.
+
+Guardrails and Validation Mechanisms:
+To ensure safe and efficient behavior, the following guardrails are introduced: 
+1. Tool Usage Requirement (Gating Mechanism)
+The model must demonstrate sufficient exploration before accessing run_query. The list_tables() function must be used at least once, describe_table() and sample_table_rows() can be used but we will validate that they are used on the correct table. 
+This ensures the model is not blindly guessing schema or data structure. 
+
+2. Read-Only Database Access
+The database connection is restricted to read-only permissions preventing INSERT, UPDATE, DELETE, DROP, ALTER calls. 
+This guarantees that no data can be modified regardless of the model behavior. 
+
+3. SELECT-Only Enforcement (extra validation)
+Even with read-only access, we will explicitly validate that ONLY SELECT queries are allowed and any non-SELECT query will be rejected before execution. 
+
+4. Query Attempt Budget (cost control)
+Each user question is assigned a limited number of query attempts. Example: 1-3 run_query calls per question. 
+This prevents brute-force query generation, excessive api usage, and unnecessary database load.
+
+5. Row Limiting / Result Size Control (more cost control)
+Queries will be constrained to prevent excessive data retrieval. Can be done through a combination of the following: enforce TOP(n) or equivalent limits, restrict result Size
+This ensures minimal token usage via efficient data transfer to the model
+
+6. Execution Logging
+All interactions are logged, including tool usage (and order), SQL queries generated, number of query attempts, and final output.
+This provides transparency, debug-ability, and data that can be used for evaluating system efficiency
