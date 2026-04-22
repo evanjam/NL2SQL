@@ -46,3 +46,6 @@ This ensures minimal token usage via efficient data transfer to the model
 6. Execution Logging
 All interactions are logged, including tool usage (and order), SQL queries generated, number of query attempts, and final output.
 This provides transparency, debug-ability, and data that can be used for evaluating system efficiency
+
+Edit/Update 4/22/2026:
+-Phase 2 will be trimmed during final implementation due to time and complexity concerns. Goal is to deliver on items 1-4 and chop/reduce the scope of items 5 and 6 in the above list.
