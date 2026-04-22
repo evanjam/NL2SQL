@@ -159,7 +159,7 @@ def send_message(chat, user_text: str) -> str:
     chat["history"].append(user_text)
 
     resp = chat["client"].models.generate_content(
-        model="gemini-2.5-flash",
+        model="gemini-2.5-flash-lite",
         contents=chat["history"],
         config=types.GenerateContentConfig(
             system_instruction=SYSTEM_INSTRUCTIONS,
