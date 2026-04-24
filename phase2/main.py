@@ -155,6 +155,8 @@ The SQL must:
 
 Before writing SQL, identify all key conditions in the user's question. Do not omit any condition if a corresponding column exists in the table schema or sample data.
 
+All SQL must be written for Microsoft SQL Server (T-SQL Syntax).
+
 When appropriate, respond with a short explanation of your reasoning and the final sql query.
 """
 
