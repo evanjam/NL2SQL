@@ -136,6 +136,7 @@ def sample_table_rows(table_name: str, n: int) -> str:
 SYSTEM_INSTRUCTIONS = """
 You are a database assistant. Your job is to answer user questions about the database. 
 You have access to tools. Always call tools instead of guessing. You must not ask the user to provide tool outputs, call the tools yourself.
+Use the tools whenever it is appropriate to help the user and get closer to the requested answer. Do not ask the user for permission to run tools. 
 You are allowed to propose SQL queries even if you cannot directly execute them.
 The SQL should be as simple and precise as possible using the correct table, exact column names, avoid "SELECT *", and include only necessary filters.
 Before writing SQL, identify all key conditions in the user's question. Do not omit any condition if a corresponding column exists in the table schema or sample data.
@@ -175,7 +176,31 @@ def send_message(chat, user_text: str) -> str:
     if resp.text:
         chat["history"].append(resp.text)
 
-    return resp.text or ""
+    #normal case: gemini returned final text properly
+    if resp.text:
+        chat["history"].append(resp.text)
+        return resp.text
+    
+    #no-text case (tool-call): ask gemini to finish the answer
+    follow_up = "using the tool results, now provide the final answer to the user's original question."
+
+    chat["history"].append(follow_up)
+
+    final_resp = chat["client"].models.generate_content(
+        model="gemini-2.5-flash-lite",
+        contents=chat["history"],
+        config=types.GenerateContentConfig(
+            system_instruction=SYSTEM_INSTRUCTIONS,
+            tools=[list_tables, describe_table, sample_table_rows],
+            temperature=0,
+        ),
+    )
+
+    if final_resp.text:
+        chat["history"].append(final_resp.text)
+        return final_resp.text
+    
+    return "Gemini used tools but did not return a final text answer"
 
 #----------
 #Entry Point
