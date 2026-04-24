@@ -172,10 +172,6 @@ def send_message(chat, user_text: str) -> str:
         ),
     )
 
-    #keep the conversation going
-    if resp.text:
-        chat["history"].append(resp.text)
-
     #normal case: gemini returned final text properly
     if resp.text:
         chat["history"].append(resp.text)
@@ -184,11 +180,12 @@ def send_message(chat, user_text: str) -> str:
     #no-text case (tool-call): ask gemini to finish the answer
     follow_up = "using the tool results, now provide the final answer to the user's original question."
 
-    chat["history"].append(follow_up)
+    final_contents = list(resp.automatic_function_calling_history)
+    final_contents.append(follow_up)
 
     final_resp = chat["client"].models.generate_content(
         model="gemini-2.5-flash-lite",
-        contents=chat["history"],
+        contents=final_contents,
         config=types.GenerateContentConfig(
             system_instruction=SYSTEM_INSTRUCTIONS,
             tools=[list_tables, describe_table, sample_table_rows],
